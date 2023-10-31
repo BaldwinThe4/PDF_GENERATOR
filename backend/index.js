@@ -1,24 +1,47 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const pdf = require('html-pdf');
-const cors = require('cors');
-const pdfTemplate = require('./documents');
+// app.mjs
+import express from 'express';
+import { json, urlencoded } from 'express';
+import pdf from 'html-pdf';
+import cors from 'cors';
+import pdfTemplate from './documents/index.js';
+import fs from 'fs';
+
 const app = express();
 const port = process.env.PORT || 5000;
+
 app.use(cors());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-///post////
+app.use(json());
+app.use(urlencoded({ extended: true }));
+
+// POST endpoint for creating PDF
 app.post('/create-pdf', (req, res) => {
-    pdf.create(pdfTemplate(req.body), {}).toFile('rezultati.pdf', (err) => {
-      if(err) {
-          return console.log('error');
-      }
-  res.send(Promise.resolve())
-    });
-  })
-  ///////get////
-  app.get('/fetch-pdf', (req, res) => {
-    res.sendFile(`${__dirname}/rezultati.pdf`);
+  const pdfOptions = { format: 'Letter' }; // Adjust the format as needed
+  const pdfFilePath = 'rezultati.pdf';
+
+  pdf.create(pdfTemplate(req.body), pdfOptions).toFile(pdfFilePath, (err) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Error creating PDF');
+    } else {
+      res.status(200).send('PDF created');
+    }
   });
-app.listen(port, () => console.log(`Listening on port ${port}`));
+});
+
+// GET endpoint for serving the PDF
+app.get('/fetch-pdf', (req, res) => {
+  const pdfFilePath = 'rezultati.pdf';
+  fs.promises.readFile(pdfFilePath)
+    .then(data => {
+      res.contentType('application/pdf');
+      res.send(data);
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).send('Error reading PDF');
+    });
+});
+
+app.listen(port, () => {
+  console.log(`Listening on port ${port}`);
+});

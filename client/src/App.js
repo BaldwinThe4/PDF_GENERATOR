@@ -30,10 +30,14 @@ function App() {
 
   return (
     <div className="App">
-      <input type="text" placeholder="Name" name="name" value={formData.name} onChange={handleChange} />
-      <input type="number" placeholder="Receipt ID" name="receiptId" value={formData.receiptId} onChange={handleChange} />
-      <input type="number" placeholder="Price 1" name="price1" value={formData.price1} onChange={handleChange} />
-      <input type="number" placeholder="Price 2" name="price2" value={formData.price2} onChange={handleChange} />
+      <label>Name</label>
+      <input type="text" placeholder="Name" name="name" value={formData.name} onChange={handleChange} /><br/>
+      <label>Price</label>
+      <input type="number" placeholder="Receipt ID" name="receiptId" value={formData.receiptId} onChange={handleChange} /><br/>
+      <label>Price</label>
+      <input type="number" placeholder="Price 1" name="price1" value={formData.price1} onChange={handleChange} /><br/>
+      <label>Price</label>
+      <input type="number" placeholder="Price 2" name="price2" value={formData.price2} onChange={handleChange} /><br/>
       <button onClick={createAndDownloadPdf}>Download PDF</button>
     </div>
   );

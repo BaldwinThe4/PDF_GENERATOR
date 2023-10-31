@@ -1,5 +1,5 @@
 
-module.exports = ({ name, price1, price2, receiptId }) => {
+export default function pdfTemplate({ name, price1, price2, receiptId }) {
     const today = new Date();
 return `
     <!doctype html>
@@ -87,7 +87,7 @@ return `
                    <td colspan="2">
                       <table>
                          <tr>
-                            <td class="title"><img  src="https://i2.wp.com/cleverlogos.co/wp-content/uploads/2018/05/reciepthound_1.jpg?fit=800%2C600&ssl=1"
+                            <td class="title"><img  src=""
                                style="width:100%; max-width:156px;"></td>
                             <td>
                                Datum: ${`${today.getDate()}. ${today.getMonth() + 1}. ${today.getFullYear()}.`}
