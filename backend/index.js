@@ -3,7 +3,8 @@ import express from 'express';
 import { json, urlencoded } from 'express';
 import pdf from 'html-pdf';
 import cors from 'cors';
-import pdfTemplate from './documents/index.js';
+import pdfTemplate1 from './documents/index.js';
+import pdfTemplate2 from './documents/newPdf.js';
 import fs from 'fs';
 
 const app = express();
@@ -18,7 +19,7 @@ app.post('/create-pdf', (req, res) => {
   const pdfOptions = { format: 'Letter' }; // Adjust the format as needed
   const pdfFilePath = 'rezultati.pdf';
 
-  pdf.create(pdfTemplate(req.body), pdfOptions).toFile(pdfFilePath, (err) => {
+  pdf.create(pdfTemplate2(req.body), pdfOptions).toFile(pdfFilePath, (err) => {
     if (err) {
       console.error(err);
       res.status(500).send('Error creating PDF');

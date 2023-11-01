@@ -1,5 +1,6 @@
 
 export default function pdfTemplate({ name, price1, price2, receiptId }) {
+   console.log("hii");
     const today = new Date();
 return `
     <!doctype html>
