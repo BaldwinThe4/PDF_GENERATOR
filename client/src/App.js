@@ -24,6 +24,18 @@ function App() {
       .then(() => axios.get('/fetch-pdf', { responseType: 'blob' }))
       .then((res) => {
         const pdfBlob = new Blob([res.data], { type: 'application/pdf' });
+        const reader = new FileReader();
+        reader.onload = () => {
+          const base64String = reader.result.split(',')[1];
+  
+          // Step 4: Send the base64String to the server for database storage
+          axios.post('/save-pdf-to-database', { pdfData: base64String })
+            .then((response) => {
+              // Step 5: Handle the response from the server
+              console.log(response);
+            });
+        };
+        reader.readAsDataURL(pdfBlob);
       
         saveAs(pdfBlob, 'generatedDocument.pdf');
         

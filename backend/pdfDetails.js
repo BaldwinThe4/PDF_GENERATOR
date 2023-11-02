@@ -1,11 +1,11 @@
-const mongoose = require("mongoose");
+// pdfDetails.js
+import mongoose from 'mongoose';
 
-const PdfDetailsSchema = new mongoose.Schema(
-  {
-    pdf: String,
-    title: String,
-  },
-  { collection: "PdfDetails" }
-);
+const PdfDetailsSchema = new mongoose.Schema({
+  pdfData: Buffer, // Use Buffer to store binary data
+  title: String,
+}, { collection: 'PdfDetails' });
 
-mongoose.model("PdfDetails", PdfDetailsSchema);
+const PdfDetails = mongoose.model('PdfDetails', PdfDetailsSchema);
+
+export default PdfDetails; // Export the model

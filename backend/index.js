@@ -7,10 +7,10 @@ import cors from 'cors';
 import pdfTemplate1 from './documents/index.js';
 import pdfTemplate2 from './documents/newPdf.js';
 import fs from 'fs';
-
 const app = express();
+import PdfDetails from'./pdfDetails.js'
 const port = process.env.PORT || 5000;
-
+app.use(express.json());
 app.use(cors());
 app.use(json());
 app.use(urlencoded({ extended: true }));
@@ -43,10 +43,30 @@ app.get('/fetch-pdf', (req, res) => {
       res.status(500).send('Error reading PDF');
     });
 });
+app.post('/save-pdf-to-database', async (req, res) => {
+  try {
+    const base64PdfData = req.body.pdfData;
+console.log(base64PdfData);
+    // Check if the base64PdfData is a string
+    if (typeof base64PdfData !== 'string') {
+      return res.status(400).json({ message: 'Invalid PDF data format' });
+    }
 
-//--------------------------------------
+    // Decode the base64 data into a Buffer
+    const pdfData = Buffer.from(base64PdfData, 'base64');
+
+    const pdf = new PdfDetails({ pdfData: pdfData });
+    await pdf.save();
+    res.status(201).json({ message: 'PDF saved to the database' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error saving PDF to the database' });
+  }
+});
+
+
 const mongoUrl =
-  "mongodb+srv://adarsh:adarsh@cluster0.zllye.mongodb.net/?retryWrites=true&w=majority";
+  "mongodb+srv://Sanchit:Qq4DAqrMfT1G3lrK@cluster0.irbupfc.mongodb.net/?retryWrites=true&w=majority";
 
 mongoose
   .connect(mongoUrl, {
@@ -56,43 +76,6 @@ mongoose
     console.log("Connected to database");
   })
   .catch((e) => console.log(e));
-  //----------------------------------
-  const multer = require("multer");
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "./files");
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now();
-    cb(null, uniqueSuffix + file.originalname);
-  },
-});
-//----------------------------------
-require("./pdfDetails");
-const PdfSchema = mongoose.model("PdfDetails");
-const upload = multer({ storage: storage });
-
-app.post("/upload-files", upload.single("file"), async (req, res) => {
-  console.log(req.file);
-  const title = req.body.title;
-  const fileName = req.file.filename;
-  try {
-    await PdfSchema.create({ title: title, pdf: fileName });
-    res.send({ status: "ok" });
-  } catch (error) {
-    res.json({ status: error });
-  }
-});
-
-app.get("/get-files", async (req, res) => {
-  try {
-    PdfSchema.find({}).then((data) => {
-      res.send({ status: "ok", data: data });
-    });
-  } catch (error) {}
-});
-//------------------------------------------------
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);
 });

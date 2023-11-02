@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { saveAs } from 'file-saver';
+const pdfId='6543e317511d7baa882482a9'
 function generateRandomData(rows, columns) {
   const data = [];
   for (let i = 0; i < rows; i++) {
@@ -73,15 +74,47 @@ function Grid() {
     padding: '8px',
     textAlign: 'center',
   };
-  const handleSubmit=()=>{
+  const handleSubmit = () => {
+    // Step 1: Generate the PDF and fetch it
     axios.post('/create-pdf', data)
       .then(() => axios.get('/fetch-pdf', { responseType: 'blob' }))
       .then((res) => {
+        // Step 2: Handle the generated PDF
         const pdfBlob = new Blob([res.data], { type: 'application/pdf' });
-        console.log(pdfBlob);
-        saveAs(pdfBlob, 'generatedDocument.pdf');
+        // saveAs(pdfBlob, 'generatedDocument.pdf');
+  
+        // Step 3: Save the PDF to the database
+        axios.post('/save-pdf-to-database', { pdfData: pdfBlob })
+          .then((response) => {
+            // Step 4: Handle the response from the server
+            console.log(response);
+          })
+          .then(() => {
+            // Step 5: Download the saved PDF (optional)
+            fetch('/download-pdf/:id', { method: 'POST', body: { pdfData: pdfBlob } })
+              .then((response) => {
+                if (response.ok) {
+                  return response.blob();
+                } else {
+                  console.error('Failed to download the PDF');
+                }
+              })
+              .then((pdfBlob) => {
+                const pdfUrl = URL.createObjectURL(pdfBlob);
+                saveAs(pdfUrl, 'generatedDocument.pdf');
+              })
+              .catch((error) => {
+                console.error('Error:', error);
+              });
+          })
+          .catch((error) => {
+            console.error('Error saving PDF to the database:', error);
+          });
+      })
+      .catch((error) => {
+        console.error('Error generating or fetching the PDF:', error);
       });
-  }
+  };
   
   
   return (
