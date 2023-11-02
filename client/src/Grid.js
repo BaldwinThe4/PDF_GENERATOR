@@ -73,42 +73,16 @@ function Grid() {
     padding: '8px',
     textAlign: 'center',
   };
-  // const handleSubmit=()=>{
-  //   axios.post('/create-pdf', data)
-  //     .then(() => axios.get('/fetch-pdf', { responseType: 'blob' }))
-  //     .then((res) => {
-  //       const pdfBlob = new Blob([res.data], { type: 'application/pdf' });
-  //       console.log(pdfBlob);
-  //       saveAs(pdfBlob, 'generatedDocument.pdf');
-  //     });
-  // }
-  const handleSubmit = () => {
-    axios
-      .post('/create-pdf', data)
+  const handleSubmit=()=>{
+    axios.post('/create-pdf', data)
       .then(() => axios.get('/fetch-pdf', { responseType: 'blob' }))
       .then((res) => {
         const pdfBlob = new Blob([res.data], { type: 'application/pdf' });
-  
-        // Create a FormData object to upload the PDF to Cloudinary
-        const formData = new FormData();
-        formData.append('file', pdfBlob, 'generatedDocument.pdf');
-        formData.append('upload_preset', 'your_upload_preset'); // Replace with your Cloudinary upload preset
-  
-        // Make a POST request to Cloudinary's upload API
-        axios.post('https://api.cloudinary.com/v1_1/cantacloud2/auto/upload', formData, {
-          headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-          },
-        })
-        .then((cloudinaryResponse) => {
-          // Cloudinary will return the URL of the uploaded PDF
-          const cloudinaryUrl = cloudinaryResponse.data.secure_url;
-          console.log(cloudinaryUrl);
-  
-          // You can save or use this URL as needed
-        });
+        console.log(pdfBlob);
+        saveAs(pdfBlob, 'generatedDocument.pdf');
       });
-  };
+  }
+  
   
   return (
     <div>
