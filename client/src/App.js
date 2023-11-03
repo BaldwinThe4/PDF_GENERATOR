@@ -24,6 +24,7 @@ function App() {
       .then(() => axios.get('/fetch-pdf', { responseType: 'blob' }))
       .then((res) => {
         const pdfBlob = new Blob([res.data], { type: 'application/pdf' });
+        console.log(pdfBlob);
         const reader = new FileReader();
         reader.onload = () => {
           const base64String = reader.result.split(',')[1];

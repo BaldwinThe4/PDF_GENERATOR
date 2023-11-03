@@ -77,44 +77,29 @@ function Grid() {
   const handleSubmit = () => {
     // Step 1: Generate the PDF and fetch it
     axios.post('/create-pdf', data)
-      .then(() => axios.get('/fetch-pdf', { responseType: 'blob' }))
-      .then((res) => {
-        // Step 2: Handle the generated PDF
-        const pdfBlob = new Blob([res.data], { type: 'application/pdf' });
-        // saveAs(pdfBlob, 'generatedDocument.pdf');
-  
-        // Step 3: Save the PDF to the database
-        axios.post('/save-pdf-to-database', { pdfData: pdfBlob })
-          .then((response) => {
-            // Step 4: Handle the response from the server
-            console.log(response);
-          })
-          .then(() => {
-            // Step 5: Download the saved PDF (optional)
-            fetch('/download-pdf/:id', { method: 'POST', body: { pdfData: pdfBlob } })
-              .then((response) => {
-                if (response.ok) {
-                  return response.blob();
-                } else {
-                  console.error('Failed to download the PDF');
-                }
-              })
-              .then((pdfBlob) => {
-                const pdfUrl = URL.createObjectURL(pdfBlob);
-                saveAs(pdfUrl, 'generatedDocument.pdf');
-              })
-              .catch((error) => {
-                console.error('Error:', error);
-              });
-          })
-          .catch((error) => {
-            console.error('Error saving PDF to the database:', error);
-          });
+      .then((want) => {
+        // Assuming that the server returns the `pdfId` in the response
+        // Step 2: Fetch the PDF by ID
+        console.log(want);
+        const pdfId='want.data.pdf._id';
+console.log(pdfId);
+        return axios.get(`/fetch-pdf/${pdfId}`, { responseType: 'blob' });
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
+          const pdfUrl = URL.createObjectURL(pdfBlob);
+          saveAs(pdfUrl, 'generatedDocument.pdf');
+        } else {
+          console.error('Failed to download the PDF');
+        }
       })
       .catch((error) => {
-        console.error('Error generating or fetching the PDF:', error);
+        console.error('Error:', error);
       });
   };
+  
+  
   
   
   return (
